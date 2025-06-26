@@ -107,7 +107,11 @@ To follow the principle of **least privilege**, the solution defines two IAM use
 ## 🗂️ Project Structure
 
 ├── main.tf                     # Terraform configuration
+
 ├── provider.tf 		           # AWS provider module
+
 ├── lambda_function.py          # Python logic for EXIF cleaning
+
 ├── lambda_exif_cleaner.zip     # Lambda deployment package
+
 ├── README.md                   # Project documentation
