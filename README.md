@@ -27,7 +27,7 @@ To extend this further, we have two users User A and User B. Create IAM users wi
 
 ## 📸 Overview
 
-For this solution, I chose to implement an AWS Lambda function, given the relatively small payload size of the images. While the EXIF specification does not strictly define a maximum metadata size, in practice, EXIF metadata is limited to approximately 64 KB, with typical .jpg or .jpeg images containing 1 KB to 50 KB of metadata.
+For this solution, I chose to implement an AWS Lambda function, assuming the relatively small payload size of the images I thought this service would provide the functionality needed. While the EXIF specification does not strictly define a maximum metadata size, in practice, EXIF metadata is limited to approximately 64 KB, with typical .jpg or .jpeg images containing 1 KB to 50 KB of metadata.
 
 This solution uses a serverless, AWS-based architecture to automatically strip EXIF metadata from image files uploaded to an Amazon S3 bucket. Upon upload, a Lambda function is triggered to process the image, remove any EXIF metadata, and store the sanitized version in a separate destination bucket — preserving the file path.
 
@@ -107,7 +107,7 @@ To follow the principle of **least privilege**, the solution defines two IAM use
 ## 🗂️ Project Structure
 
 ├── main.tf                     # Terraform configuration
-├── provider.tf 		# AWS provider module
+├── provider.tf 		           # AWS provider module
 ├── lambda_function.py          # Python logic for EXIF cleaning
 ├── lambda_exif_cleaner.zip     # Lambda deployment package
 ├── README.md                   # Project documentation
