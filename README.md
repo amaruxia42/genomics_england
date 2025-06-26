@@ -1,60 +1,112 @@
-# genomics_england
-Genomics England Platform AWS/Terraform/Python Test
 
+# 🧬 Genomics England — AWS/Terraform/Python Test
+
+GEL – Platform Engineer – AWS/Terraform/Python Test 2021
+Please complete this exercise within 2 days of receipt of this task. To share your
+solution, send us a link to a repository on the platform of your choice (GitHub, or
+GitLab, or Bitbucket, or something else). Please do not feel that you have to spend
+the whole time on the exercise, we have allowed a longer time to allow you to think on
+the method. There is no right or wrong answer to this, we are interested in seeing
+your approach to the task.
+Step 1
 A company allows their users to upload pictures to an S3 bucket. These pictures are always in the .jpg format.
 The company wants these files to be stripped from any exif metadata before being shown on their website.
 Pictures are uploaded to an S3 bucket A.
 Create a system that retrieves .jpg files when they are uploaded to the S3 bucket A, removes any exif metadata,
 and save them to another S3 bucket B. The path of the files should be the same in buckets A and B.
 
-📸 EXIF Metadata Removal Pipeline using AWS Lambda & S3
+Step 2
+To extend this further, we have two users User A and User B. Create IAM users with the following access:
+• User A can Read/Write to Bucket A
+• User B can Read from Bucket B
 
-📝 Solution Scope
+---
 
-This project implements a serverless solution to automatically strip EXIF metadata from .jpg images uploaded to an Amazon S3 bucket (Bucket A) and save the sanitized images to a secondary S3 bucket (Bucket B) with the same key path.
+## 📸 Overview
 
-⸻
+For this solution, I chose to implement an AWS Lambda function, given the relatively small payload size of the images. While the EXIF specification does not strictly define a maximum metadata size, in practice, EXIF metadata is limited to approximately 64 KB, with typical .jpg or .jpeg images containing 1 KB to 50 KB of metadata.
 
-✅ Step 1: Remove Metadata (EXIF)
+This solution uses a serverless, AWS-based architecture to automatically strip EXIF metadata from image files uploaded to an Amazon S3 bucket. Upon upload, a Lambda function is triggered to process the image, remove any EXIF metadata, and store the sanitized version in a separate destination bucket — preserving the file path.
 
-🎯 Objective
+When a user uploads a file to **S3 Bucket A**, an **AWS Lambda function** is triggered to:
 
-Ensure that any .jpg images uploaded to the S3 (Bucket A) has its EXIF metadata removed before being uploaded and made available on the company’s website, where it is accessed from another S3 (Bucket B).
+1. Retrieve the image.
+2. Remove any embedded EXIF metadata.
+3. Save a sanitized version to **S3 Bucket B**, maintaining the same object key (file path).
 
-⚙️ How It Works
-	•	An Amazon S3 event trigger is configured on Bucket A to invoke a Lambda function when a .jpg file is uploaded.
-	•	The Lambda function:
-	1.	Retrieves the uploaded .jpg file from Bucket A.
-	2.	Uses the exif Python module to check and remove any EXIF metadata found.
-	3.	Once the EXIF metadata is removed it then writes the cleaned image to Bucket B, preserving the original key (file path).
-	•	The file in Bucket B is now ready to upload to the website, free of any metadata information.
+---
 
-⸻
+## 🎯 Objectives
 
-🔐 Step 2: IAM Access Control Least Privileges 
+- ✅ Automatically remove sensitive EXIF metadata (location, timestamps, camera details, etc.).
+- ✅ Separate source (raw) and destination (clean) storage buckets.
+- ✅ Enable controlled access through IAM for different user roles.
+- ✅ Implement everything as Infrastructure-as-Code using Terraform.
 
-🧑‍💼 User Permissions
+---
 
-Two IAM users are created with least privilege access:
-	•	User A:
-	•	Needs Read/Write access to Bucket A
-	•	Can upload new .jpg files and view/manage existing ones.
-	•	User B:
-	•	Read-only access to Bucket B
-	•	Can safely view sanitized images served on the website.
+## ⚙️ How It Works
 
-⸻
+1. **Image Upload**  
+   A user uploads a `.jpg` or `.jpeg` image to **S3 Bucket A**.
 
-📦 Tech Stack
-	•	AWS S3 (storage) 
-	•	AWS Lambda (image processing)
-	•	IAM (access control)
-	•	Terraform (infrastructure as code)
-	•	Python with:
-	•	exif
-	•	reverse_geocoder (optional future use but outside the requirements stated for the task)
-	•	pycountry (optional future use, but outside the requirements stated for the task)
+2. **Lambda Trigger**  
+   S3 triggers the **Lambda function** on object creation events (`s3:ObjectCreated:*`).
 
-⸻
+3. **EXIF Metadata Removal**  
+   The Lambda function:
+   - Downloads the image from Bucket A.
+   - Uses the "exif" Python module to check and remove all EXIF metadata.
+   - Uploads the cleaned image to Bucket B, preserving the original object path.
 
-📁 Folder Structure
+4. **Result**  
+   The cleaned image is now available in Bucket B for the web develop to load to company's website.
+
+---
+
+## 🔐 IAM & Access Control
+
+To follow the principle of **least privilege**, the solution defines two IAM users:
+
+| User     | Permissions                            |
+|----------|----------------------------------------|
+| User A   | Read/Write access to **Bucket A**      |
+| User B   | Read-only access to **Bucket B**       |
+
+**Lambda Role Permissions**:
+- Read from **Bucket A**
+- Write to **Bucket B**
+- Log to **CloudWatch**
+
+---
+
+## 🧰 Tech Stack
+
+| Technology      | Purpose                                 |
+|----------------|------------------------------------------|
+| AWS S3          | Object storage for raw & clean images   |
+| AWS Lambda      | EXIF-stripping compute function         |
+| AWS IAM         | Secure access control                   |
+| AWS CloudWatch  | Function monitoring/logging             |
+| Terraform       | Infrastructure-as-Code (IaC)            |
+| Python 3.13     | Lambda runtime                          |
+| `exif` module   | Python library for metadata operations  |
+
+> *Note:* Other libraries like `reverse_geocoder` and `pycountry` were explored for geo-tagging but are **not required** in the current solution.
+
+---
+
+## 🚀 Deployment Notes
+
+- Built using Terraform for repeatable deployments.
+- Supports `.jpg` and `.jpeg` file extensions (case-insensitive).
+- 
+---
+
+## 🗂️ Project Structure
+
+├── main.tf                     # Terraform configuration
+├── provider.tf 		# AWS provider module
+├── lambda_function.py          # Python logic for EXIF cleaning
+├── lambda_exif_cleaner.zip     # Lambda deployment package
+├── README.md                   # Project documentation
