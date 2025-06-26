@@ -18,7 +18,9 @@ and save them to another S3 bucket B. The path of the files should be the same i
 
 Step 2
 To extend this further, we have two users User A and User B. Create IAM users with the following access:
+
 • User A can Read/Write to Bucket A
+
 • User B can Read from Bucket B
 
 ---
@@ -93,15 +95,13 @@ To follow the principle of **least privilege**, the solution defines two IAM use
 | Python 3.13     | Lambda runtime                          |
 | `exif` module   | Python library for metadata operations  |
 
-> *Note:* Other libraries like `reverse_geocoder` and `pycountry` were explored for geo-tagging but are **not required** in the current solution.
-
 ---
 
 ## 🚀 Deployment Notes
 
 - Built using Terraform for repeatable deployments.
 - Supports `.jpg` and `.jpeg` file extensions (case-insensitive).
-- 
+
 ---
 
 ## 🗂️ Project Structure
