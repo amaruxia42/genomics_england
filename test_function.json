@@ -1,0 +1,15 @@
+
+{
+  "Records": [
+    {
+      "s3": {
+        "bucket": {
+          "name": "avengers-bucket-b"
+        },
+        "object": {
+          "key": "test.jpg"
+        }
+      }
+    }
+  ]
+}
