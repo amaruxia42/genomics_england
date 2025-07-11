@@ -24,6 +24,7 @@ To extend this further, we have two users User A and User B. Create IAM users wi
 • User B can Read from Bucket B
 
 ---
+![Lambda and S3 Architecture](./lambda_exif.png)
 
 ## 📸 Overview
 
